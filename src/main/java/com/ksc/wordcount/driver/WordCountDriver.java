@@ -42,7 +42,7 @@ public class WordCountDriver {
         int reduceTaskNum = Integer.parseInt(properties.getProperty("reduce.task.num"));
 
         FileFormat fileFormat = new UnsplitFileFormat();
-        PartionFile[]  partionFiles = fileFormat.getSplits(inputPath, 1000);
+        PartionFile[] partionFiles = fileFormat.getSplits(inputPath, 1000);
 
         TaskManager taskScheduler = DriverEnv.taskManager;
 
@@ -60,7 +60,7 @@ public class WordCountDriver {
                 @Override
                 public Stream<KeyValue> map(Stream<String> stream) {
                     //todo 学生实现 定义maptask处理数据的规则
-                    return null;
+                    return stream.flatMap(line -> Stream.of(line.split("\\s+"))).map(word -> new KeyValue(word,1));
                 }
             };
             MapTaskContext mapTaskContext = new MapTaskContext(applicationId, "stage_"+mapStageId, taskScheduler.generateTaskId(), partionFile.getPartionId(), partionFile,
