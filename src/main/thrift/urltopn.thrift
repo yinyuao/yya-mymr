@@ -4,8 +4,10 @@ struct UrlTopNAppRequest {
     1: string applicationId;
     2: string inputPath;
     3: string ouputPath;
-    4: i32 numReduceTasks;
-    5: i32 splitSize;
+    4: i32 topN;
+    5: i32 numReduceTasks;
+    6: i32 splitSize;
+
 }
 
 struct UrlTopNAppResponse {
@@ -21,5 +23,5 @@ struct UrlTopNResult {
 service UrlTopNService {
     UrlTopNAppResponse submitApp(1: UrlTopNAppRequest urlTopNAppRequest),
     UrlTopNAppResponse getAppStatus(1: string applicationId),
-    list<UrlTopNResult> getTopNAppResult(1: string applicationId, 2: i32 topN)
+    list<UrlTopNResult> getTopNAppResult(1: string applicationId)
 }
