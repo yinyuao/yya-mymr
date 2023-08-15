@@ -16,19 +16,30 @@ import com.ksc.wordcount.task.map.MapTaskContext;
 import com.ksc.wordcount.task.reduce.ReduceFunction;
 import com.ksc.wordcount.task.reduce.ReduceTaskContext;
 
+import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Stream;
 
 public class WordCountDriver {
 
     public static void main(String[] args) {
-        DriverEnv.host= "127.0.0.1";
-        DriverEnv.port = 4040;
-        String inputPath = "/tmp/input";
-        String outputPath = "/tmp/output";
-        String applicationId = "wordcount_001";
-        int reduceTaskNum = 2;
+        Properties properties = new Properties();
+        try {
+            // 加载配置文件
+            properties.load(new FileInputStream("src/main/conf/driver/application.properties"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        // 从配置文件中读取参数
+        DriverEnv.host= properties.getProperty("driver.host");
+        DriverEnv.port = Integer.parseInt(properties.getProperty("driver.port"));;
+        String inputPath = properties.getProperty("input.path");
+        String outputPath = properties.getProperty("output.path");
+        String applicationId = properties.getProperty("application.id");
+        int reduceTaskNum = Integer.parseInt(properties.getProperty("reduce.task.num"));
 
         FileFormat fileFormat = new UnsplitFileFormat();
         PartionFile[]  partionFiles = fileFormat.getSplits(inputPath, 1000);
