@@ -6,19 +6,24 @@ import java.util.List;
 
 public class UnsplitFileFormat implements FileFormat {
 
-        @Override
-        public boolean isSplitable(String filePath) {
-            return false;
+    @Override
+    public boolean isSplitable(String filePath) {
+        return true;
+    }
+
+    @Override
+    public PartionFile[] getSplits(String filePath, long size) {
+        List<PartionFile> partiongFileList=new ArrayList<>();
+        //todo 学生实现 driver端切分split的逻辑
+        int pantionId = 0;
+        File[] files = new File(filePath).listFiles();
+        for (File file : files) {
+            FileSplit[] fileSplits = {new FileSplit(file.getAbsolutePath(), 0, file.length())};
+            partiongFileList.add(new PartionFile(pantionId, fileSplits));
+            pantionId++;
         }
-
-
-        @Override
-        public PartionFile[] getSplits(String filePath, long size) {
-            List<PartionFile> partiongFileList=new ArrayList<>();
-            //todo 学生实现 driver端切分split的逻辑
-
-            return partiongFileList.toArray(new PartionFile[partiongFileList.size()]);
-        }
+        return partiongFileList.toArray(new PartionFile[partiongFileList.size()]);
+    }
 
     @Override
     public PartionReader createReader() {
