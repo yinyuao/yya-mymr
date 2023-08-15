@@ -13,7 +13,7 @@ public class UnsplitFileFormat implements FileFormat {
 
     @Override
     public PartionFile[] getSplits(String filePath, long size) {
-        List<PartionFile> partiongFileList=new ArrayList<>();
+        List<PartionFile> partiongFileList = new ArrayList<>();
         //todo 学生实现 driver端切分split的逻辑
         int pantionId = 0;
         File[] files = new File(filePath).listFiles();
