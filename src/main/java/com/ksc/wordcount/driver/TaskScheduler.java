@@ -29,7 +29,14 @@ public class TaskScheduler {
 
         while (!taskQueue.isEmpty()) {
             //todo 学生实现 轮询给各个executor派发任务
-
+            executorManager.getExecutorAvailableCoresMap().forEach((executorUrl, availableCores) -> {
+                if (availableCores > 0 && !taskQueue.isEmpty()) {
+                    TaskContext taskContext = taskQueue.poll();
+                    taskExecuotrMap.put(taskContext.getTaskId(), executorUrl);
+                    executorManager.updateExecutorAvailableCores(executorUrl, -1);
+                    DriverRpc.submit(executorUrl, taskContext);
+                }
+            });
             try {
                 String executorAvailableCoresMapStr=executorManager.getExecutorAvailableCoresMap().toString();
                 System.out.println("TaskScheduler submitTask stageId:"+stageId+",taskQueue size:"+taskQueue.size()+", executorAvailableCoresMap:" + executorAvailableCoresMapStr+ ",sleep 1000");
