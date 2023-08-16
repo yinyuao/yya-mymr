@@ -39,7 +39,11 @@ public class DirectShuffleWriter implements ShuffleWriter<KeyValue> {
     //todo 学生实现 将maptask的处理结果写入shuffle文件中
     @Override
     public void write(Stream<KeyValue> entryStream) throws IOException {
-
+        Iterator<KeyValue> iterator = entryStream.iterator();
+        while (iterator.hasNext()) {
+            KeyValue next = iterator.next();
+            fileWriters[next.getKey().hashCode() % reduceTaskNum].writeObject(next);
+        }
     }
 
     @Override
