@@ -16,26 +16,13 @@ public class Executor {
 
     public static void main(String[] args) throws InterruptedException {
 
-        Properties properties = new Properties();
-        try {
-            // 加载配置文件
-            properties.load(new FileInputStream("src/main/conf/executor/application.properties"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-
-        // 获取配置参数
-        // 设置 ExecutorEnv 中的配置信息
-        ExecutorEnv.host = properties.getProperty("executor.host");
-        ExecutorEnv.port = Integer.parseInt(properties.getProperty("executor.port"));
-        ExecutorEnv.memory = properties.getProperty("executor.memory");
-        ExecutorEnv.driverUrl = properties.getProperty("executor.driverUrl");
-        ExecutorEnv.core = Integer.parseInt(properties.getProperty("executor.core"));
-        ExecutorEnv.executorUrl = properties.getProperty("executor.executorUrl")
-                .replace("{host}", ExecutorEnv.host)
-                .replace("{port}", String.valueOf(ExecutorEnv.port));
-        ExecutorEnv.shufflePort = Integer.parseInt(properties.getProperty("executor.shufflePort"));
+        ExecutorEnv.host = args[0];
+        ExecutorEnv.port = Integer.parseInt(args[1]);
+        ExecutorEnv.shufflePort = Integer.parseInt(args[2]);
+        ExecutorEnv.memory = args[3];
+        ExecutorEnv.core = Integer.parseInt(args[4]);
+        ExecutorEnv.driverUrl = "akka.tcp://DriverSystem@" + args[5] + ":" + Integer.parseInt(args[6]) + "/user/driverActor";
+        ExecutorEnv.executorUrl = "akka.tcp://ExecutorSystem@" + ExecutorEnv.host + ":" + ExecutorEnv.port + "/user/executorActor";
 
         // 启动一个线程来启动 ShuffleService 服务器
         new Thread(() -> {
