@@ -83,7 +83,15 @@ public class WordCountDriver {
                 public Stream<KeyValue<String, Integer>> reduce(Stream<KeyValue<String, Integer>> stream) {
                     HashMap<String, Integer> map = new HashMap<>();
                     //todo 学生实现 定义reducetask处理数据的规则
-
+                    stream.forEach(e -> {
+                        String key = e.getKey();
+                        Integer value = e.getValue();
+                        if (map.containsKey(key)) {
+                            map.put(key, map.get(key) + value);
+                        } else {
+                            map.put(key, value);
+                        }
+                    });
                     return map.entrySet().stream().map(e -> new KeyValue(e.getKey(), e.getValue()));
                 }
             };
