@@ -31,8 +31,16 @@ public class TextPartionWriter implements PartionWriter<KeyValue>, Serializable 
     //todo 学生实现 将reducetask的计算结果写入结果文件中
     @Override
     public void write(Stream<KeyValue> stream) throws IOException {
-
-
+        File file = new File(destDest + File.separator + "part_" + padLeft(partionId, 3) + ".txt");
+        try (FileOutputStream fos = new FileOutputStream(file)){
+            stream.forEach(keyValue -> {
+                try {
+                    fos.write((keyValue.getKey() + "\t" + keyValue.getValue() + "\n").getBytes("utf-8"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
 }
