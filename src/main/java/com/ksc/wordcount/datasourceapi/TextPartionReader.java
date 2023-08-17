@@ -1,5 +1,6 @@
 package com.ksc.wordcount.datasourceapi;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -15,7 +16,9 @@ public class TextPartionReader implements PartionReader<String>, Serializable {
         //todo 学生实现 maptask读取原始数据文件的内容
         FileSplit[] fileSplits = partionFile.getFileSplits();
         for (FileSplit fileSplit : fileSplits) {
-            Stream<String> lineStream = Files.lines(Paths.get(fileSplit.getFileName()));
+            BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(fileSplit.getFileName()));
+            bufferedReader.skip(fileSplit.getStart());
+            Stream<String> lineStream = bufferedReader.lines().limit(fileSplit.getLength());
             allStream = Stream.concat(allStream, lineStream);
         }
         return allStream;
