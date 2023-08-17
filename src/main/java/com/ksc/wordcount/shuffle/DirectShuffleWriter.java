@@ -20,18 +20,25 @@ public class DirectShuffleWriter implements ShuffleWriter<KeyValue> {
 
     ShuffleBlockId[] shuffleBlockIds ;
 
-    public DirectShuffleWriter(String baseDir,String shuffleId,String  applicationId,int mapId, int reduceTaskNum) {
-        this.baseDir = baseDir;
-        this.reduceTaskNum = reduceTaskNum;
-        fileWriters = new ObjectOutputStream[reduceTaskNum];
-        shuffleBlockIds = new ShuffleBlockId[reduceTaskNum];
+    public DirectShuffleWriter(String baseDir, String shuffleId, String applicationId, int mapId, int reduceTaskNum) {
+        this.baseDir = baseDir;  // 设置基本目录
+        this.reduceTaskNum = reduceTaskNum;  // 设置 reduce 任务数量
+        fileWriters = new ObjectOutputStream[reduceTaskNum];  // 初始化一个 ObjectOutputStream 数组
+        shuffleBlockIds = new ShuffleBlockId[reduceTaskNum];  // 初始化一个 ShuffleBlockId 数组
+
+        // 循环为每个 reduce 任务创建对应的文件写入流和 ShuffleBlockId
         for (int i = 0; i < reduceTaskNum; i++) {
             try {
-                shuffleBlockIds[i]=new ShuffleBlockId(baseDir,applicationId,shuffleId,mapId,i);
+                // 创建 ShuffleBlockId，用于标识每个 reduce 任务的数据块
+                shuffleBlockIds[i] = new ShuffleBlockId(baseDir, applicationId, shuffleId, mapId, i);
+
+                // 创建目录以存储 Shuffle 数据
                 new File(shuffleBlockIds[i].getShuffleParentPath()).mkdirs();
+
+                // 创建 ObjectOutputStream 以将数据写入对应的 Shuffle 文件
                 fileWriters[i] = new ObjectOutputStream(new FileOutputStream(shuffleBlockIds[i].getShufflePath()));
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace();  // 打印异常信息
             }
         }
     }

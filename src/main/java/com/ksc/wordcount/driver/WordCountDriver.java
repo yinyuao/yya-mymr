@@ -16,13 +16,11 @@ import com.ksc.wordcount.task.map.MapTaskContext;
 import com.ksc.wordcount.task.reduce.ReduceFunction;
 import com.ksc.wordcount.task.reduce.ReduceTaskContext;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class WordCountDriver {
@@ -97,19 +95,30 @@ public class WordCountDriver {
             ReduceFunction<String, Integer, String, Integer> reduceFunction = new ReduceFunction<String, Integer, String, Integer>() {
                 @Override
                 public Stream<KeyValue<String, Integer>> reduce(Stream<KeyValue<String, Integer>> stream) {
-                    HashMap<String, Integer> map = new HashMap<>();
+                    HashMap<String, Integer> wordCounts = new HashMap<>();
+
                     // 遍历流中的KeyValue对，对单词次数进行聚合
-                    stream.forEach(e -> {
-                        String key = e.getKey();
-                        Integer value = e.getValue();
-                        if (map.containsKey(key)) {
-                            map.put(key, map.get(key) + value);
-                        } else {
-                            map.put(key, value);
-                        }
+                    stream.forEach(kv -> {
+                        String key = kv.getKey();
+                        Integer value = kv.getValue();
+                        wordCounts.put(key, wordCounts.getOrDefault(key, 0) + value);
                     });
+
+                    // 根据值进行降序排序
+                    List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(wordCounts.entrySet());
+                    sortedEntries.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
+
+                    // 获取前top位的键值对
+                    List<KeyValue<String, Integer>> topEntries = new ArrayList<>();
+                    HashSet<Integer> set = new HashSet<>();
+                    for (Map.Entry<String, Integer> entry : sortedEntries) {
+                        topEntries.add(new KeyValue<>(entry.getKey(), entry.getValue()));
+                        set.add(entry.getValue());
+                        if (set.size() >= topN) break;
+                    }
+
                     // 将聚合结果转化为KeyValue对
-                    return map.entrySet().stream().map(e -> new KeyValue(e.getKey(), e.getValue()));
+                    return topEntries.stream();
                 }
             };
 

@@ -35,17 +35,6 @@ public class ReduceTask extends Task {
             for(ShuffleBlockId shuffleBlockId:shuffleBlockId){
                 stream=Stream.concat(stream,new ShuffleClient().fetchShuffleData(shuffleBlockId));
             }
-
-//            HashMap<String, Integer> map = new HashMap<>();
-//            stream.forEach(e->{
-//                String key = (String) e.getKey();
-//                Integer value = (Integer) e.getValue();
-//                if (map.containsKey(key)) {
-//                    map.put(key, map.get(key) + value);
-//                } else {
-//                    map.put(key, value);
-//                }
-//            });
             Stream reduceStream = reduceFunction.reduce(stream);
             partionWriter.write(reduceStream);
             return new ReduceStatus(super.taskId, TaskStatusEnum.FINISHED);
