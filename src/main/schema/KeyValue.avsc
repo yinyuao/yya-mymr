@@ -1,0 +1,8 @@
+{
+    "type": "record",
+    "name": "KeyValue",
+    "fields": [
+        {"name": "key", "type": "string"},
+        {"name": "value", "type": "int"}
+    ]
+}

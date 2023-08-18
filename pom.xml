@@ -83,6 +83,13 @@
             <version>5.5.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.10.2</version>
+        </dependency>
+
+
 
     </dependencies>
 
