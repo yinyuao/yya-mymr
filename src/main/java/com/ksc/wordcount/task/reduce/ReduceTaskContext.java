@@ -10,13 +10,15 @@ public class ReduceTaskContext extends TaskContext {
     //String destDir;
     ReduceFunction reduceFunction;
     PartionWriter partionWriter;
+    int reduceTaskNum;
 
-    public ReduceTaskContext(String applicationId, String stageId, int taskId, int partionId,ShuffleBlockId[] shuffleBlockId, ReduceFunction reduceFunction,PartionWriter partionWriter) {
+    public ReduceTaskContext(String applicationId, String stageId, int taskId, int partionId,int reduceTaskNum, ShuffleBlockId[] shuffleBlockId, ReduceFunction reduceFunction, PartionWriter partionWriter) {
         super(applicationId, stageId, taskId, partionId);
         this.shuffleBlockId = shuffleBlockId;
         //this.destDir = destDir;
         this.reduceFunction = reduceFunction;
         this.partionWriter = partionWriter;
+        this.reduceTaskNum = reduceTaskNum;
     }
 
     public ShuffleBlockId[] getShuffleBlockId() {
@@ -35,4 +37,8 @@ public class ReduceTaskContext extends TaskContext {
         return partionWriter;
     }
 
+
+    public int getReduceTaskNum() {
+        return reduceTaskNum;
+    }
 }

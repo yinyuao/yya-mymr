@@ -2,6 +2,7 @@ package com.ksc.wordcount.shuffle;
 
 import com.ksc.wordcount.task.KeyValue;
 import com.ksc.wordcount.task.map.MapStatus;
+import com.ksc.wordcount.task.reduce.ReduceStatus;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,16 +19,16 @@ public class DirectShuffleWriter implements ShuffleWriter<KeyValue> {
 
     ObjectOutputStream[] fileWriters;
 
-    ShuffleBlockId[] shuffleBlockIds ;
+    ShuffleBlockId[] shuffleBlockIds;
 
-    public DirectShuffleWriter(String baseDir,String shuffleId,String  applicationId,int mapId, int reduceTaskNum) {
+    public DirectShuffleWriter(String baseDir, String shuffleId, String stageId, String applicationId, int mapId, int reduceTaskNum) {
         this.baseDir = baseDir;
         this.reduceTaskNum = reduceTaskNum;
         fileWriters = new ObjectOutputStream[reduceTaskNum];
         shuffleBlockIds = new ShuffleBlockId[reduceTaskNum];
         for (int i = 0; i < reduceTaskNum; i++) {
             try {
-                shuffleBlockIds[i]=new ShuffleBlockId(baseDir,applicationId,shuffleId,mapId,i);
+                shuffleBlockIds[i] = new ShuffleBlockId(baseDir, applicationId, shuffleId, stageId, mapId, i);
                 new File(shuffleBlockIds[i].getShuffleParentPath()).mkdirs();
                 fileWriters[i] = new ObjectOutputStream(new FileOutputStream(shuffleBlockIds[i].getShufflePath()));
             } catch (IOException e) {
@@ -57,9 +58,11 @@ public class DirectShuffleWriter implements ShuffleWriter<KeyValue> {
         }
     }
 
-    public  MapStatus getMapStatus(int mapTaskId) {
-        return new MapStatus(mapTaskId,shuffleBlockIds);
+    public MapStatus getMapStatus(int mapTaskId) {
+        return new MapStatus(mapTaskId, shuffleBlockIds);
     }
 
-
+    public ReduceStatus getReduceStatus(int taskId) {
+        return new ReduceStatus(taskId, shuffleBlockIds);
+    }
 }

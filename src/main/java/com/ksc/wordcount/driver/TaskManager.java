@@ -5,6 +5,7 @@ import com.ksc.wordcount.task.map.MapStatus;
 import com.ksc.wordcount.task.TaskContext;
 import com.ksc.wordcount.task.TaskStatus;
 import com.ksc.wordcount.task.TaskStatusEnum;
+import com.ksc.wordcount.task.reduce.ReduceStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,6 +73,41 @@ public class TaskManager {
             shuffleBlockIds.add(shuffleBlockId);
         }
         return shuffleBlockIds.toArray(new ShuffleBlockId[shuffleBlockIds.size()]);
+    }
+
+    public ShuffleBlockId[] getReduceStageShuffleIdByReduceId(int stageId,int reduceId){
+        List<ShuffleBlockId> shuffleBlockIdList = new ArrayList<>();
+        int taskId = stageMap.get(stageId).get(reduceId);
+        ShuffleBlockId[] shuffleBlockIds = ((ReduceStatus) taskStatusMap.get(taskId)).getShuffleBlockIds();
+        for(ShuffleBlockId shuffleBlockId : shuffleBlockIds){
+            shuffleBlockIdList.add(shuffleBlockId);
+        }
+        return shuffleBlockIdList.toArray(new ShuffleBlockId[shuffleBlockIdList.size()]);
+    }
+
+    public ShuffleBlockId[] getAllReduceStageShuffleId(int stageId) {
+        List<ShuffleBlockId> shuffleBlockIdList = new ArrayList<>();
+        for(int taskId:stageMap.get(stageId)){
+            ShuffleBlockId[] shuffleBlockIds = ((ReduceStatus) taskStatusMap.get(taskId)).getShuffleBlockIds();
+            for (ShuffleBlockId shuffleBlockId : shuffleBlockIds) {
+                shuffleBlockIdList.add(shuffleBlockId);
+            }
+        }
+        System.out.println("222222222222");
+        System.out.println(shuffleBlockIdList.size());
+        return shuffleBlockIdList.toArray(new ShuffleBlockId[shuffleBlockIdList.size()]);
+    }
+    public ShuffleBlockId[] getAllReduceStageShuffleId2(int stageId) {
+        List<ShuffleBlockId> shuffleBlockIdList = new ArrayList<>();
+        for(int taskId:stageMap.get(stageId)){
+            ShuffleBlockId[] shuffleBlockIds = ((MapStatus) taskStatusMap.get(taskId)).getShuffleBlockIds();
+            for (ShuffleBlockId shuffleBlockId : shuffleBlockIds) {
+                shuffleBlockIdList.add(shuffleBlockId);
+            }
+        }
+        System.out.println("222222222222");
+        System.out.println(shuffleBlockIdList.size());
+        return shuffleBlockIdList.toArray(new ShuffleBlockId[shuffleBlockIdList.size()]);
     }
 
     public void updateTaskStatus(TaskStatus taskStatus) {

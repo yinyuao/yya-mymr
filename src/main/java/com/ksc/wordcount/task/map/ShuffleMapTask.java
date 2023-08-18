@@ -31,15 +31,12 @@ public class ShuffleMapTask extends Task<MapStatus> {
 
     public MapStatus runTask() throws IOException {
         Stream<String> stream = partionReader.toStream(partiongFile);
-        stream.forEach(line -> System.out.println(line));
 
-//        Stream<AbstractMap.SimpleEntry<String, Integer>> simpleEntryStream = stream.flatMap(line -> Arrays.stream(line.split("\\s+")))
-//                .map(word -> new AbstractMap.SimpleEntry<String, Integer>(word, 1));
         Stream kvStream = mapFunction.map(stream);
 
         String shuffleId= UUID.randomUUID().toString();
         //将task执行结果写入shuffle文件中
-        DirectShuffleWriter shuffleWriter = new DirectShuffleWriter(AppConfig.shuffleTempDir, shuffleId,applicationId, partionId, reduceTaskNum);
+        DirectShuffleWriter shuffleWriter = new DirectShuffleWriter(AppConfig.shuffleTempDir, shuffleId, super.stageId, applicationId, partionId, reduceTaskNum);
         shuffleWriter.write(kvStream);
         shuffleWriter.commit();
         return shuffleWriter.getMapStatus(taskId);
