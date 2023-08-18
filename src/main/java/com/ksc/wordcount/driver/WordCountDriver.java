@@ -35,11 +35,10 @@ public class WordCountDriver {
         String outputPath = args[6];
         int topN = Integer.parseInt(args[7]);
         int reduceTaskNum = Integer.parseInt(args[8]);
-        int splitSize = Integer.parseInt(args[9]);
-
+        long size = Integer.parseInt(args[9]);
         // 使用指定的文件格式获取文件切片信息
         FileFormat fileFormat = new UnsplitFileFormat();
-        PartionFile[] partionFiles = fileFormat.getSplits(inputPath, splitSize);
+        PartionFile[] partionFiles = fileFormat.getSplits(inputPath, size);
 
         // 获取任务调度器
         TaskManager taskScheduler = DriverEnv.taskManager;
