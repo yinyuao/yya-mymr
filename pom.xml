@@ -76,6 +76,13 @@
             <version>2.5.32</version>
         </dependency>
 
+        <!--引入kryo依赖-->
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>5.5.0</version>
+        </dependency>
+
 
     </dependencies>
 
@@ -119,41 +126,41 @@
                 </executions>
             </plugin>
 
-<!--            <plugin>-->
-<!--                <groupId>org.apache.thrift.tools</groupId>-->
-<!--                <artifactId>maven-thrift-plugin</artifactId>-->
-<!--                <version>0.1.11</version>-->
-<!--                <configuration>-->
-<!--                    &lt;!&ndash; thrift编译器的路径 &ndash;&gt;-->
-<!--                    <thriftExecutable>${thrift.executable}</thriftExecutable>-->
-<!--                    <thriftSourceRoot>${project.basedir}/src/main/thrift</thriftSourceRoot>-->
-<!--                    <outputDirectory>${project.build.directory}/generated-sources/thrift</outputDirectory>-->
-<!--                    <generator>java</generator>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>thrift-sources</id>-->
-<!--                        <phase>generate-sources</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>compile</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>org.apache.thrift</groupId>-->
-<!--                        <artifactId>libthrift</artifactId>-->
-<!--                        <version>${thrift.version}</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.thrift.tools</groupId>-->
+            <!--                <artifactId>maven-thrift-plugin</artifactId>-->
+            <!--                <version>0.1.11</version>-->
+            <!--                <configuration>-->
+            <!--                    &lt;!&ndash; thrift编译器的路径 &ndash;&gt;-->
+            <!--                    <thriftExecutable>${thrift.executable}</thriftExecutable>-->
+            <!--                    <thriftSourceRoot>${project.basedir}/src/main/thrift</thriftSourceRoot>-->
+            <!--                    <outputDirectory>${project.build.directory}/generated-sources/thrift</outputDirectory>-->
+            <!--                    <generator>java</generator>-->
+            <!--                </configuration>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>thrift-sources</id>-->
+            <!--                        <phase>generate-sources</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>compile</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--                <dependencies>-->
+            <!--                    <dependency>-->
+            <!--                        <groupId>org.apache.thrift</groupId>-->
+            <!--                        <artifactId>libthrift</artifactId>-->
+            <!--                        <version>${thrift.version}</version>-->
+            <!--                    </dependency>-->
+            <!--                </dependencies>-->
+            <!--            </plugin>-->
 
             <!-- 编译jar包的jdk版本 -->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <version>3.1</version>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-compiler-plugin</artifactId>-->
+            <!--                <version>3.1</version>-->
+            <!--            </plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

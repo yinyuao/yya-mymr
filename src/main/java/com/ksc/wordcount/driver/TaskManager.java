@@ -93,8 +93,6 @@ public class TaskManager {
                 shuffleBlockIdList.add(shuffleBlockId);
             }
         }
-        System.out.println("222222222222");
-        System.out.println(shuffleBlockIdList.size());
         return shuffleBlockIdList.toArray(new ShuffleBlockId[shuffleBlockIdList.size()]);
     }
     public ShuffleBlockId[] getAllReduceStageShuffleId2(int stageId) {
@@ -105,8 +103,6 @@ public class TaskManager {
                 shuffleBlockIdList.add(shuffleBlockId);
             }
         }
-        System.out.println("222222222222");
-        System.out.println(shuffleBlockIdList.size());
         return shuffleBlockIdList.toArray(new ShuffleBlockId[shuffleBlockIdList.size()]);
     }
 

@@ -1,8 +1,11 @@
 package com.ksc.wordcount.shuffle.nettyimpl.server;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
 import com.ksc.wordcount.conf.AppConfig;
 import com.ksc.wordcount.shuffle.ShuffleBlockId;
 import com.ksc.wordcount.shuffle.nettyimpl.FileComplate;
+import com.ksc.wordcount.task.KeyValue;
 import io.netty.channel.*;
 
 import java.io.EOFException;
@@ -23,19 +26,16 @@ public class ShuffleServiceHandler extends ChannelInboundHandlerAdapter {
             System.out.println("ShuffleServiceHandler received:"+((ShuffleBlockId) msg).name());
             File file = new File(shuffleBlockId.getShufflePath());
             if (file.exists()) {
-                ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
-                Object obj = null;
-                //(obj=objectInputStream.readObject())!=null
-                do{
-                    try{
-                        obj = objectInputStream.readObject();
-                    } catch (EOFException e){
-                        break;
+                Kryo kryo = new Kryo();
+                kryo.register(KeyValue.class);
+                try (Input input = new Input(new FileInputStream(file))) {
+                    Object obj = kryo.readClassAndObject(input);
+                    while (obj != null) {
+                        ctx.writeAndFlush(obj);
+                        obj = kryo.readClassAndObject(input);
                     }
-                    ctx.writeAndFlush(obj);
-                }while (obj != null);
-                System.out.println("ShuffleServiceHandler send FileComplate");
-                ctx.writeAndFlush(new FileComplate());
+                    ctx.writeAndFlush(new FileComplate());
+                }
             } else {
                 ctx.writeAndFlush("shuffle File not found: " + file.getAbsolutePath());
             }

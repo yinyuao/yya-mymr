@@ -1,5 +1,7 @@
 package com.ksc.wordcount.shuffle;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Output;
 import com.ksc.wordcount.task.KeyValue;
 import com.ksc.wordcount.task.map.MapStatus;
 import com.ksc.wordcount.task.reduce.ReduceStatus;
@@ -17,20 +19,20 @@ public class DirectShuffleWriter implements ShuffleWriter<KeyValue> {
 
     int reduceTaskNum;
 
-    ObjectOutputStream[] fileWriters;
+    Output[] fileWriters;
 
     ShuffleBlockId[] shuffleBlockIds;
 
     public DirectShuffleWriter(String baseDir, String shuffleId, String stageId, String applicationId, int mapId, int reduceTaskNum) {
         this.baseDir = baseDir;
         this.reduceTaskNum = reduceTaskNum;
-        fileWriters = new ObjectOutputStream[reduceTaskNum];
+        fileWriters = new Output[reduceTaskNum];
         shuffleBlockIds = new ShuffleBlockId[reduceTaskNum];
         for (int i = 0; i < reduceTaskNum; i++) {
             try {
                 shuffleBlockIds[i] = new ShuffleBlockId(baseDir, applicationId, shuffleId, stageId, mapId, i);
                 new File(shuffleBlockIds[i].getShuffleParentPath()).mkdirs();
-                fileWriters[i] = new ObjectOutputStream(new FileOutputStream(shuffleBlockIds[i].getShufflePath()));
+                fileWriters[i] = new Output(new FileOutputStream(shuffleBlockIds[i].getShufflePath()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -43,18 +45,17 @@ public class DirectShuffleWriter implements ShuffleWriter<KeyValue> {
         Iterator<KeyValue> iterator = entryStream.iterator();
         while (iterator.hasNext()) {
             KeyValue next = iterator.next();
-            fileWriters[next.getKey().hashCode() % reduceTaskNum].writeObject(next);
+            Kryo kryo = new Kryo();
+            kryo.register(KeyValue.class);
+            int reduceTaskIndex = next.getKey().hashCode() % reduceTaskNum;
+            kryo.writeClassAndObject(fileWriters[reduceTaskIndex], next);
         }
     }
 
     @Override
     public void commit() {
         for (int i = 0; i < reduceTaskNum; i++) {
-            try {
-                fileWriters[i].close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            fileWriters[i].close();
         }
     }
 
