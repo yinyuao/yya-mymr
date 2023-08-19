@@ -47,13 +47,12 @@ public class WordCountDriver {
         ActorRef driverActorRef = executorSystem.actorOf(Props.create(DriverActor.class), "driverActor");
         System.out.println("ServerActor started at: " + driverActorRef.path().toString());
 
+        // 先通过参数执行一次
+        new Thread(() -> {
+            startProcess(utr);
+        }).start();
+
         UrlTopNServer.start();
-
-        startProcess(utr);
-        // 清空数据
-        DriverEnv.taskManager = new TaskManager();
-
-        DriverEnv.taskScheduler = new TaskScheduler(DriverEnv.taskManager, DriverEnv.executorManager);
     }
 
     public static void startProcess(UrlTopNAppRequest utr) {

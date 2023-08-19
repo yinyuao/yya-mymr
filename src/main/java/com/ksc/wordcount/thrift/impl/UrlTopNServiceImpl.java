@@ -26,16 +26,19 @@ public class UrlTopNServiceImpl implements UrlTopNService.Iface {
     public UrlTopNAppResponse submitApp(UrlTopNAppRequest urlTopNAppRequest) throws TException {
         // 实现 submitApp 方法的逻辑，处理传入的请求，返回相应的响应
         UrlTopNAppResponse response = new UrlTopNAppResponse();
-        startProcess(urlTopNAppRequest);
-        response.setAppStatus(DriverEnv.applicationManager.getAppStatus(urlTopNAppRequest.getApplicationId()));
+        new Thread(() -> {
+            startProcess(urlTopNAppRequest);
+        }).start();
+        response.setAppStatus(0);
         response.setApplicationId(urlTopNAppRequest.getApplicationId());
         return response;
     }
 
     @Override
     public UrlTopNAppResponse getAppStatus(String applicationId) throws TException {
+
         UrlTopNAppResponse response = new UrlTopNAppResponse();
-        response.setAppStatus(DriverEnv.applicationManager.getAppStatus(applicationId));
+        response.setAppStatus(DriverEnv.applicationManager.getAppStatus(applicationId) == null ? 0 : DriverEnv.applicationManager.getAppStatus(applicationId));
         response.setApplicationId(applicationId);
         return response;
     }
