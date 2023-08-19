@@ -7,6 +7,6 @@ import java.util.stream.Stream;
 
 public interface PartionWriter<T>   {
 
-    void write(Stream<T> stream) throws IOException;
+    String write(Stream<T> stream) throws IOException;
 
 }

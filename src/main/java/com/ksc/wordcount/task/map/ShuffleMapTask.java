@@ -36,7 +36,7 @@ public class ShuffleMapTask extends Task<MapStatus> {
 
         String shuffleId= UUID.randomUUID().toString();
         //将task执行结果写入shuffle文件中
-        DirectShuffleWriter shuffleWriter = new DirectShuffleWriter(AppConfig.shuffleTempDir, shuffleId, super.stageId, applicationId, partionId, reduceTaskNum);
+        DirectShuffleWriter shuffleWriter = new DirectShuffleWriter(AppConfig.shuffleTempDir, shuffleId, stageId, applicationId, partionId, reduceTaskNum);
         shuffleWriter.write(kvStream);
         shuffleWriter.commit();
         return shuffleWriter.getMapStatus(taskId);

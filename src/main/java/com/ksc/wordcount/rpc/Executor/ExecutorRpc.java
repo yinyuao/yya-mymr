@@ -2,6 +2,7 @@ package com.ksc.wordcount.rpc.Executor;
 
 import akka.actor.ActorRef;
 import com.ksc.wordcount.rpc.ExecutorRegister;
+import com.ksc.wordcount.task.KeyValue;
 import com.ksc.wordcount.task.map.MapStatus;
 import com.ksc.wordcount.task.TaskStatus;
 import com.ksc.wordcount.task.TaskStatusEnum;
@@ -24,5 +25,9 @@ public class ExecutorRpc {
 
     public static void register(ExecutorRegister executorRegister){
         ExecutorSystem.getDriverRef().tell(executorRegister, ActorRef.noSender());
+    }
+
+    public static void subOutPath(KeyValue keyValue) {
+        ExecutorSystem.getDriverRef().tell(keyValue, ActorRef.noSender());
     }
 }

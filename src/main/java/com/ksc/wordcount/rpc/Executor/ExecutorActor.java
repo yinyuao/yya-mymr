@@ -1,10 +1,12 @@
 package com.ksc.wordcount.rpc.Executor;
 
 import akka.actor.AbstractActor;
+import com.ksc.wordcount.rpc.ExecutorRegister;
 import com.ksc.wordcount.task.map.MapTaskContext;
 import com.ksc.wordcount.task.map.ShuffleMapTask;
 import com.ksc.wordcount.task.reduce.ReduceTask;
 import com.ksc.wordcount.task.reduce.ReduceTaskContext;
+import com.ksc.wordcount.worker.ExecutorEnv;
 import com.ksc.wordcount.worker.ExecutorThreadPoolFactory;
 
 public class ExecutorActor extends AbstractActor {
@@ -21,6 +23,7 @@ public class ExecutorActor extends AbstractActor {
                     ExecutorThreadPoolFactory.getExecutorService().submit(new ReduceTask(taskContext));
                 })
                 .match(Object.class, message -> {
+//                    ExecutorRpc.register(new ExecutorRegister(ExecutorEnv.executorUrl, ExecutorEnv.memory, ExecutorEnv.core)); // 注册 Executor
                     //处理不了的消息
                     System.out.println("unhandled message:" + message);
                 })

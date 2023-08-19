@@ -24,6 +24,7 @@ public class Executor {
         ExecutorEnv.driverUrl = "akka.tcp://DriverSystem@" + args[5] + ":" + Integer.parseInt(args[6]) + "/user/driverActor";
         ExecutorEnv.executorUrl = "akka.tcp://ExecutorSystem@" + ExecutorEnv.host + ":" + ExecutorEnv.port + "/user/executorActor";
 
+
         // 启动一个线程来启动 ShuffleService 服务器
         new Thread(() -> {
             try {
@@ -38,7 +39,15 @@ public class Executor {
         ActorRef clientActorRef = executorSystem.actorOf(Props.create(ExecutorActor.class), "executorActor"); // 创建 ExecutorActor
         System.out.println("ServerActor started at: " + clientActorRef.path().toString());
 
-        // 注册 Executor 信息
-        ExecutorRpc.register(new ExecutorRegister(ExecutorEnv.executorUrl, ExecutorEnv.memory, ExecutorEnv.core)); // 注册 Executor
+        // 注册
+        while (true) {
+            try {
+                ExecutorRpc.register(new ExecutorRegister(ExecutorEnv.executorUrl, ExecutorEnv.memory, ExecutorEnv.core));
+                break;
+            } catch (Exception e) {
+                Thread.sleep(1000);
+            }
+        }
+
     }
 }

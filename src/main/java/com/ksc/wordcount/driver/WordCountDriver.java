@@ -15,6 +15,9 @@ import com.ksc.wordcount.task.map.MapFunction;
 import com.ksc.wordcount.task.map.MapTaskContext;
 import com.ksc.wordcount.task.reduce.ReduceFunction;
 import com.ksc.wordcount.task.reduce.ReduceTaskContext;
+import com.ksc.wordcount.thrift.UrlTopNAppRequest;
+import com.ksc.wordcount.thrift.impl.server.UrlTopNServer;
+import org.apache.thrift.transport.TTransportException;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -25,29 +28,56 @@ import java.util.stream.Stream;
 
 public class WordCountDriver {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TTransportException {
         // 从命令行参数中读取配置信息
         DriverEnv.host = args[0];
         DriverEnv.port = Integer.parseInt(args[1]);
         DriverEnv.thriftPort = Integer.parseInt(args[2]);
-        String applicationId = args[4];
-        String inputPath = args[5];
-        String outputPath = args[6];
-        int topN = Integer.parseInt(args[7]);
-        int reduceTaskNum = Integer.parseInt(args[8]);
-        long size = Integer.parseInt(args[9]);
-        // 使用指定的文件格式获取文件切片信息
-        FileFormat fileFormat = new UnsplitFileFormat();
-        PartionFile[] partionFiles = fileFormat.getSplits(inputPath, size);
 
-        // 获取任务调度器
-        TaskManager taskScheduler = DriverEnv.taskManager;
+        UrlTopNAppRequest utr = new UrlTopNAppRequest();
+        utr.setApplicationId(args[4]);
+        utr.setInputPath(args[5]);
+        utr.setOuputPath(args[6]);
+        utr.setTopN(Integer.parseInt(args[7]));
+        utr.setNumReduceTasks(Integer.parseInt(args[8]));
+        utr.setSplitSize(Integer.parseInt(args[9]));
 
         // 获取Executor系统和DriverActor
         ActorSystem executorSystem = DriverSystem.getExecutorSystem();
         ActorRef driverActorRef = executorSystem.actorOf(Props.create(DriverActor.class), "driverActor");
         System.out.println("ServerActor started at: " + driverActorRef.path().toString());
 
+        UrlTopNServer.start();
+
+        startProcess(utr);
+        // 清空数据
+        DriverEnv.taskManager = new TaskManager();
+
+        DriverEnv.taskScheduler = new TaskScheduler(DriverEnv.taskManager, DriverEnv.executorManager);
+    }
+
+    public static void startProcess(UrlTopNAppRequest utr) {
+
+        DriverEnv.taskManager = new TaskManager();
+        DriverEnv.taskScheduler = new TaskScheduler(DriverEnv.taskManager, DriverEnv.executorManager);
+
+        String applicationId = utr.getApplicationId();
+        int reduceTaskNum = utr.getNumReduceTasks();
+        int topN = utr.getTopN();
+        String outputPath = utr.getOuputPath();
+
+        DriverEnv.applicationManager.setAppStatus(applicationId, 0);
+
+        // 使用指定的文件格式获取文件切片信息
+        FileFormat fileFormat = new UnsplitFileFormat();
+        PartionFile[] partionFiles = fileFormat.getSplits(utr.getInputPath(), utr.getSplitSize());
+
+        // 获取任务调度器
+        TaskManager taskScheduler = DriverEnv.taskManager;
+
+        DriverEnv.applicationManager.setCurrentApplication(applicationId);
+
+        DriverEnv.applicationManager.setAppStatus(applicationId, 1);
         // 处理Map阶段
         int mapStageId = 0;
         taskScheduler.registerBlockingQueue(mapStageId, new LinkedBlockingQueue());
@@ -220,5 +250,9 @@ public class WordCountDriver {
         DriverEnv.taskScheduler.waitStageFinish(reduceStageId);
 
         System.out.println("Job finished");
+        DriverEnv.applicationManager.setAppStatus(applicationId, 2);
+
+
     }
+
 }

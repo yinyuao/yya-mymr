@@ -2,6 +2,7 @@ package com.ksc.wordcount.task.reduce;
 
 import com.ksc.wordcount.conf.AppConfig;
 import com.ksc.wordcount.datasourceapi.PartionWriter;
+import com.ksc.wordcount.rpc.Executor.ExecutorRpc;
 import com.ksc.wordcount.shuffle.DirectShuffleWriter;
 import com.ksc.wordcount.shuffle.ShuffleBlockId;
 import com.ksc.wordcount.shuffle.nettyimpl.client.ShuffleClient;
@@ -43,7 +44,8 @@ public class ReduceTask extends Task {
             }
             Stream reduceStream = reduceFunction.reduce(stream);
             if (partionWriter != null) {
-                partionWriter.write(reduceStream);
+                String path = partionWriter.write(reduceStream);
+                ExecutorRpc.subOutPath(new KeyValue<>(applicationId, path));
             } else {
                 String shuffleId= UUID.randomUUID().toString();
                 //将task执行结果写入shuffle文件中

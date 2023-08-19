@@ -1,6 +1,7 @@
 package com.ksc.wordcount.driver;
 
 import com.ksc.wordcount.shuffle.ShuffleBlockId;
+import com.ksc.wordcount.task.KeyValue;
 import com.ksc.wordcount.task.map.MapStatus;
 import com.ksc.wordcount.task.TaskContext;
 import com.ksc.wordcount.task.TaskStatus;
@@ -18,7 +19,7 @@ public class TaskManager {
     /**
      * stageId和task队列的映射
      */
-    private Map<Integer,BlockingQueue<TaskContext>> stageIdToBlockingQueueMap = new HashMap<>();
+    private Map<Integer, BlockingQueue<TaskContext>> stageIdToBlockingQueueMap = new HashMap<>();
 
     /**
      * stageId和taskId的映射
@@ -35,14 +36,14 @@ public class TaskManager {
         return stageIdToBlockingQueueMap.get(stageId);
     }
 
-    public void registerBlockingQueue(int stageId,BlockingQueue blockingQueue) {
-        stageIdToBlockingQueueMap.put(stageId,blockingQueue);
+    public void registerBlockingQueue(int stageId, BlockingQueue blockingQueue) {
+        stageIdToBlockingQueueMap.put(stageId, blockingQueue);
     }
 
     public void addTaskContext(int stageId, TaskContext taskContext) {
         //建立stageId和任务的映射
         getBlockingQueue(stageId).offer(taskContext);
-        if(stageMap.get(stageId) == null){
+        if (stageMap.get(stageId) == null) {
             stageMap.put(stageId, new ArrayList());
         }
         //建立stageId和任务Id的映射
@@ -50,7 +51,7 @@ public class TaskManager {
     }
 
 
-    public StageStatusEnum getStageTaskStatus(int stageId){
+    public StageStatusEnum getStageTaskStatus(int stageId) {
         //todo 学生实现 获取指定stage的执行状态，如果该stage下的所有task均执行成功，返回FINISHED
         for (int taskId : stageMap.get(stageId)) {
             if (taskStatusMap.get(taskId) == null) {
@@ -66,20 +67,20 @@ public class TaskManager {
         return StageStatusEnum.FINISHED;
     }
 
-    public ShuffleBlockId[] getStageShuffleIdByReduceId(int stageId,int reduceId){
+    public ShuffleBlockId[] getStageShuffleIdByReduceId(int stageId, int reduceId) {
         List<ShuffleBlockId> shuffleBlockIds = new ArrayList<>();
-        for(int taskId:stageMap.get(stageId)){
+        for (int taskId : stageMap.get(stageId)) {
             ShuffleBlockId shuffleBlockId = ((MapStatus) taskStatusMap.get(taskId)).getShuffleBlockIds()[reduceId];
             shuffleBlockIds.add(shuffleBlockId);
         }
         return shuffleBlockIds.toArray(new ShuffleBlockId[shuffleBlockIds.size()]);
     }
 
-    public ShuffleBlockId[] getReduceStageShuffleIdByReduceId(int stageId,int reduceId){
+    public ShuffleBlockId[] getReduceStageShuffleIdByReduceId(int stageId, int reduceId) {
         List<ShuffleBlockId> shuffleBlockIdList = new ArrayList<>();
         int taskId = stageMap.get(stageId).get(reduceId);
         ShuffleBlockId[] shuffleBlockIds = ((ReduceStatus) taskStatusMap.get(taskId)).getShuffleBlockIds();
-        for(ShuffleBlockId shuffleBlockId : shuffleBlockIds){
+        for (ShuffleBlockId shuffleBlockId : shuffleBlockIds) {
             shuffleBlockIdList.add(shuffleBlockId);
         }
         return shuffleBlockIdList.toArray(new ShuffleBlockId[shuffleBlockIdList.size()]);
@@ -87,18 +88,8 @@ public class TaskManager {
 
     public ShuffleBlockId[] getAllReduceStageShuffleId(int stageId) {
         List<ShuffleBlockId> shuffleBlockIdList = new ArrayList<>();
-        for(int taskId:stageMap.get(stageId)){
+        for (int taskId : stageMap.get(stageId)) {
             ShuffleBlockId[] shuffleBlockIds = ((ReduceStatus) taskStatusMap.get(taskId)).getShuffleBlockIds();
-            for (ShuffleBlockId shuffleBlockId : shuffleBlockIds) {
-                shuffleBlockIdList.add(shuffleBlockId);
-            }
-        }
-        return shuffleBlockIdList.toArray(new ShuffleBlockId[shuffleBlockIdList.size()]);
-    }
-    public ShuffleBlockId[] getAllReduceStageShuffleId2(int stageId) {
-        List<ShuffleBlockId> shuffleBlockIdList = new ArrayList<>();
-        for(int taskId:stageMap.get(stageId)){
-            ShuffleBlockId[] shuffleBlockIds = ((MapStatus) taskStatusMap.get(taskId)).getShuffleBlockIds();
             for (ShuffleBlockId shuffleBlockId : shuffleBlockIds) {
                 shuffleBlockIdList.add(shuffleBlockId);
             }
@@ -107,7 +98,7 @@ public class TaskManager {
     }
 
     public void updateTaskStatus(TaskStatus taskStatus) {
-        taskStatusMap.put(taskStatus.getTaskId(),taskStatus);
+        taskStatusMap.put(taskStatus.getTaskId(), taskStatus);
     }
 
 

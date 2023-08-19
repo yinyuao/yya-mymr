@@ -5,6 +5,8 @@ public class DriverEnv {
     public static int port;
     public static int thriftPort;
 
+    public static ApplicationManager applicationManager = new ApplicationManager();
+
     public static TaskManager taskManager = new TaskManager();
 
     public static ExecutorManager executorManager = new ExecutorManager();
