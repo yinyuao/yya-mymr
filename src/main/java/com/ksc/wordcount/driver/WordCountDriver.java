@@ -3,6 +3,7 @@ package com.ksc.wordcount.driver;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import com.ksc.urltopn.thrift.UrlTopNAppRequest;
 import com.ksc.wordcount.datasourceapi.FileFormat;
 import com.ksc.wordcount.datasourceapi.PartionFile;
 import com.ksc.wordcount.datasourceapi.PartionWriter;
@@ -15,8 +16,7 @@ import com.ksc.wordcount.task.map.MapFunction;
 import com.ksc.wordcount.task.map.MapTaskContext;
 import com.ksc.wordcount.task.reduce.ReduceFunction;
 import com.ksc.wordcount.task.reduce.ReduceTaskContext;
-import com.ksc.wordcount.thrift.UrlTopNAppRequest;
-import com.ksc.wordcount.thrift.impl.server.UrlTopNServer;
+import com.ksc.wordcount.thrift.UrlTopNServer;
 import org.apache.thrift.transport.TTransportException;
 
 import java.util.*;

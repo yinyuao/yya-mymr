@@ -1,4 +1,4 @@
-package com.ksc.wordcount.thrift.impl.server;
+package com.ksc.wordcount.thrift;
 
 import com.ksc.wordcount.driver.DriverEnv;
 import com.ksc.wordcount.thrift.UrlTopNService;

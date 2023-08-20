@@ -1,14 +1,12 @@
 package com.ksc.wordcount.thrift.impl;
 
+import com.ksc.urltopn.thrift.UrlTopNAppRequest;
+import com.ksc.urltopn.thrift.UrlTopNAppResponse;
+import com.ksc.urltopn.thrift.UrlTopNResult;
+import com.ksc.urltopn.thrift.UrlTopNService;
 import com.ksc.wordcount.driver.DriverEnv;
-import com.ksc.wordcount.driver.TaskManager;
-import com.ksc.wordcount.driver.TaskScheduler;
 import com.ksc.wordcount.task.KeyValue;
-import com.ksc.wordcount.thrift.UrlTopNAppRequest;
-import com.ksc.wordcount.thrift.UrlTopNAppResponse;
-import com.ksc.wordcount.thrift.UrlTopNResult;
-import com.ksc.wordcount.thrift.UrlTopNService;
-import org.apache.avro.Schema;
+
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
