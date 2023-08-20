@@ -1,12 +1,10 @@
 package com.ksc.wordcount.thrift;
 
-import com.ksc.wordcount.driver.DriverEnv;
-import com.ksc.wordcount.thrift.UrlTopNService;
+import com.ksc.urltopn.thrift.UrlTopNService;
 import com.ksc.wordcount.thrift.impl.UrlTopNServiceImpl;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TSimpleServer;
 import org.apache.thrift.transport.TServerSocket;
-import org.apache.thrift.transport.TTransportException;
 
 public class UrlTopNServer {
     public static void start() {
