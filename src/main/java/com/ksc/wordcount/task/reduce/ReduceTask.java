@@ -49,7 +49,6 @@ public class ReduceTask extends Task {
             } else {
                 String shuffleId= UUID.randomUUID().toString();
                 //将task执行结果写入shuffle文件中
-                System.out.println();
                 DirectShuffleWriter shuffleWriter = new DirectShuffleWriter(AppConfig.shuffleTempDir, shuffleId, super.stageId, applicationId, partionId, reduceTaskNum);
                 shuffleWriter.write(reduceStream);
                 shuffleWriter.commit();

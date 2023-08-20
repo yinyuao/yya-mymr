@@ -52,7 +52,10 @@ public class WordCountDriver {
             startProcess(utr);
         }).start();
 
-        UrlTopNServer.start();
+        // 启动thrift
+        new Thread(() -> {
+            UrlTopNServer.start();
+        }).start();
     }
 
     public static void startProcess(UrlTopNAppRequest utr) {
@@ -148,39 +151,39 @@ public class WordCountDriver {
         DriverEnv.taskScheduler.submitTask(reduceStageId);
         DriverEnv.taskScheduler.waitStageFinish(reduceStageId);
 
-        // 处理Reduce阶段
-        reduceStageId++;
-        taskScheduler.registerBlockingQueue(reduceStageId, new LinkedBlockingQueue());
-        for (int i = 0; i < 1; i++) {
-            // 获取与Reduce任务相关的ShuffleBlockId
-            ShuffleBlockId[] stageShuffleIds = taskScheduler.getAllReduceStageShuffleId(reduceStageId - 1);
-            // 定义ReduceFunction，按单词聚合次数
-            ReduceFunction<String, Integer, String, Integer> reduceFunction = new ReduceFunction<String, Integer, String, Integer>() {
-                @Override
-                public Stream<KeyValue<String, Integer>> reduce(Stream<KeyValue<String, Integer>> stream) {
-                    HashMap<String, Integer> wordCounts = new HashMap<>();
-
-                    // 遍历流中的KeyValue对，对单词再次次数进行聚合
-                    stream.forEach(kv -> {
-                        String key = kv.getKey();
-                        Integer value = kv.getValue();
-                        wordCounts.put(key, wordCounts.getOrDefault(key, 0) + value);
-                    });
-
-                    // 将聚合结果转化为KeyValue对
-                    return wordCounts.entrySet().stream().map(e -> new KeyValue(e.getKey(), e.getValue()));
-                }
-            };
-
-            // 创建Reduce任务上下文并添加到任务调度器
-            PartionWriter partionWriter = null;
-            ReduceTaskContext reduceTaskContext = new ReduceTaskContext(applicationId, "stage_" + reduceStageId, taskScheduler.generateTaskId(), i, 1, stageShuffleIds, reduceFunction, partionWriter);
-            taskScheduler.addTaskContext(reduceStageId, reduceTaskContext);
-        }
-
-        // 提交并等待Reduce阶段任务完成
-        DriverEnv.taskScheduler.submitTask(reduceStageId);
-        DriverEnv.taskScheduler.waitStageFinish(reduceStageId);
+//        // 处理Reduce阶段
+//        reduceStageId++;
+//        taskScheduler.registerBlockingQueue(reduceStageId, new LinkedBlockingQueue());
+//        for (int i = 0; i < 1; i++) {
+//            // 获取与Reduce任务相关的ShuffleBlockId
+//            ShuffleBlockId[] stageShuffleIds = taskScheduler.getAllReduceStageShuffleId(reduceStageId - 1);
+//            // 定义ReduceFunction，按单词聚合次数
+//            ReduceFunction<String, Integer, String, Integer> reduceFunction = new ReduceFunction<String, Integer, String, Integer>() {
+//                @Override
+//                public Stream<KeyValue<String, Integer>> reduce(Stream<KeyValue<String, Integer>> stream) {
+//                    HashMap<String, Integer> wordCounts = new HashMap<>();
+//
+//                    // 遍历流中的KeyValue对，对单词再次次数进行聚合
+//                    stream.forEach(kv -> {
+//                        String key = kv.getKey();
+//                        Integer value = kv.getValue();
+//                        wordCounts.put(key, wordCounts.getOrDefault(key, 0) + value);
+//                    });
+//
+//                    // 将聚合结果转化为KeyValue对
+//                    return wordCounts.entrySet().stream().map(e -> new KeyValue(e.getKey(), e.getValue()));
+//                }
+//            };
+//
+//            // 创建Reduce任务上下文并添加到任务调度器
+//            PartionWriter partionWriter = null;
+//            ReduceTaskContext reduceTaskContext = new ReduceTaskContext(applicationId, "stage_" + reduceStageId, taskScheduler.generateTaskId(), i, 1, stageShuffleIds, reduceFunction, partionWriter);
+//            taskScheduler.addTaskContext(reduceStageId, reduceTaskContext);
+//        }
+//
+//        // 提交并等待Reduce阶段任务完成
+//        DriverEnv.taskScheduler.submitTask(reduceStageId);
+//        DriverEnv.taskScheduler.waitStageFinish(reduceStageId);
 
         // 处理Reduce阶段
         reduceStageId++;
@@ -228,9 +231,9 @@ public class WordCountDriver {
                 List<KeyValue<String, Integer>> topEntries = new ArrayList<>();
                 HashSet<Integer> set = new HashSet<>();
                 for (KeyValue<String, Integer> entry : stream.collect(Collectors.toList())) {
-                    topEntries.add(new KeyValue<>(entry.getKey(), entry.getValue()));
                     set.add(entry.getValue());
-                    if (set.size() >= topN) break;
+                    if (set.size() - 1 >= topN) break;
+                    topEntries.add(new KeyValue<>(entry.getKey(), entry.getValue()));
                 }
 
                 // 将聚合结果转化为KeyValue对
