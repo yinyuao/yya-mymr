@@ -69,6 +69,7 @@ public class WordCountDriver {
         String outputPath = utr.getOuputPath();
 
         DriverEnv.applicationManager.setAppStatus(applicationId, 0);
+        System.out.println(utr.getInputPath());
 
         // 使用指定的文件格式获取文件切片信息
         FileFormat fileFormat = new UnsplitFileFormat();

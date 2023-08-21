@@ -17,8 +17,9 @@ public class UrlTopNServer {
             TServer server = new TSimpleServer(new TServer.Args(serverTransport).processor(processor));
 
             server.serve();
+            System.out.println("thrift qidong");
         } catch (Exception e) {
-//            System.out.println(e);
+            System.out.println(e);
         }
 
     }
