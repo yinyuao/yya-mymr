@@ -1,8 +1,8 @@
 # 作业考核点完成情况（4、11、12填写具体值，其他都填是或否）
-1. 是否支持本机一键启动服务：
-2. 是否支持分布式环境下的一键启动：
+1. 是否支持本机一键启动服务：是
+2. 是否支持分布式环境下的一键启动：是
 3. 根据配置参数，是否能输出正确计算结果：是
-4. 实现的 FileFormat 接口类：是
+4. 实现的 FileFormat 接口类：com.ksc.wordcount.datasourceapi.UnsplitFileFormat
 5. FileFormat 实现类中的 isSplitable 是否返回 true：是
 6. 是否正确输出 shuffle 文件及其路径：是
 7. shuffle 文件格式是否为 kyro：是

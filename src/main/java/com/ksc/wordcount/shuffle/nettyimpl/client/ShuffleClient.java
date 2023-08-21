@@ -44,13 +44,13 @@ public class ShuffleClient {
         ChannelFuture channelFuture = bootstrapChannel.connect(shuffleBlockId.getHost(), shuffleBlockId.getPort()).sync();
         channelFuture.addListener(future -> {
                 if (future.isSuccess()) {
-                    System.out.println("connect File Server: 连接服务器成功");
+                    System.out.println("connect File Server successful");
                 } else {
-                    System.out.println("connect File Server: 连接服务器失败");
+                    System.out.println("connect File Server fail");
                 }
             });
         channelFuture.channel().writeAndFlush(shuffleBlockId);
-        System.out.println("connect File Server: 已发送文件请求");
+        System.out.println("connect File Server File request sent");
 //        channelFuture.channel().closeFuture().sync();
         channelFuture.channel().closeFuture();
         return shuffleClientHandler.getStream();
