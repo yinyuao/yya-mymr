@@ -16,7 +16,7 @@ public class Executor {
 
     public static void main(String[] args) throws InterruptedException {
 
-        ExecutorEnv.host = args[0];
+        ExecutorEnv.host = "127.0.0.1";
         ExecutorEnv.port = Integer.parseInt(args[1]);
         ExecutorEnv.shufflePort = Integer.parseInt(args[2]);
         ExecutorEnv.memory = args[3];

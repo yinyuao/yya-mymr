@@ -30,7 +30,7 @@ public class WordCountDriver {
 
     public static void main(String[] args) throws TTransportException {
         // 从命令行参数中读取配置信息
-        DriverEnv.host = args[0];
+        DriverEnv.host = "127.0.0.1";
         DriverEnv.port = Integer.parseInt(args[1]);
         DriverEnv.thriftPort = Integer.parseInt(args[2]);
 
