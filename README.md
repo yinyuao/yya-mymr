@@ -1,92 +1,57 @@
-# mymr
+# 分布式URL分析计算框架
 
+## 背景
 
+随着互联网的迅速发展，大型企业、广告公司、社交媒体平台和新闻门户网站需要了解用户的访问习惯和最常访问的URL。传统的单机计算方法已经无法满足处理如此庞大的访问日志数据的需求。因此，开发了一个分布式计算框架来解决这个问题，该框架具备足够的灵活性，以支持各种计算任务。
 
-## Getting started
+## 作业概述
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+本作业要求实现一个分布式计算框架，其中包括支持“计算URL访问频率TOP N”的计算服务。该框架可以启动一个master进程和多个slave进程，并根据配置文件自动完成URL访问频率计算。此外，master进程还提供了Thrift服务接口，以便外部调用。
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 启动指南
 
-## Add your files
+1. 在工程根目录的 `bin/` 目录下，包含一个 `startMR.sh` 脚本，用于一键启动整个分布式计算框架及其相关服务。
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## 打包规范
 
-```
-cd existing_repo
-git remote add origin http://120.92.88.48/yinyuao/mymr.git
-git branch -M main
-git push -uf origin main
-```
+- 执行 `mvn clean package` 命令能够正常打包，生成的 JAR 包位于 `target/` 目录下，并命名为 `mymr-1.0.jar`，且为胖JAR，包含所有项目依赖。
 
-## Integrate with your tools
+## Shuffle 的目录
 
-- [ ] [Set up project integrations](http://120.92.88.48/yinyuao/mymr/-/settings/integrations)
+Shuffle的基础目录由 `System.getProperty("java.io.tmpdir")+"/shuffle"` 决定。Shuffle路径格式为：`base目录 + "/" + application_id`。例如，如果 `java.io.tmpdir` 值为 `/tmp` 且 `application_id` 为 `application_1234`，Shuffle目录则为 `/tmp/shuffle/application_1234`。
 
-## Collaborate with your team
+## 配置文件
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+配置文件需要放置在 `bin/` 目录下，包括以下文件：
 
-## Test and Deploy
+- `master.conf`：配置master节点的IP、Akka端口、Thrift端口、内存等参数。
+- `slave.conf`：配置slave节点的IP、Akka端口、RPC端口、内存、CPU等参数。
+- `urltopn.conf`：配置URL访问频率TOP N计算的参数，包括`applicationId`、输入目录、输出目录、topN、过程reduceTask数、分片大小等。
 
-Use the built-in continuous integration in GitLab.
+## Thrift 服务IDL 文件
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+`urltopn.thrift` 文件包含了URL访问频率计算的Thrift服务接口，定义了请求和响应的结构体以及服务接口，具体内容见作业要求中的示例。
 
-***
+## 作业考核点完成情况
 
-# Editing this README
+详细记录了每一考核点的完成情况，具体内容请查看 `doc/mr_point.md` 文件。
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## 输入样例
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+提供了示例的输入样例，包括多个`inputFileX.log`文件，每个文件包含了不同的访问日志。
 
-## Name
-Choose a self-explaining name for your project.
+## 输出结果样例
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+示例输出结果，按照访问频率排列URL，并显示其访问次数。
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## 补充说明
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+- 执行 `startMR.sh` 脚本可以一键启动服务。
+- 完成打包后，批改脚本会自动替换`thrift.executable`变量并重新打包。
+- 作业要求不仅包括了基本功能的实现，还包括了加分项和扣分项的评分标准，可根据实际情况获得额外加分或扣分。
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## 联系方式
+如有任何问题或疑虑，请联系：
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+殷钰奥：[yinyuao@kingsoft.com]
+项目仓库：[yuao yin / wk3-exam · GitLab
