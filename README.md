@@ -44,7 +44,6 @@ Shuffle的基础目录由 `System.getProperty("java.io.tmpdir")+"/shuffle"` 决�
 
 - 执行 `startMR.sh` 脚本可以一键启动服务。
 - 完成打包后，批改脚本会自动替换`thrift.executable`变量并重新打包。
-- 作业要求不仅包括了基本功能的实现，还包括了加分项和扣分项的评分标准，可根据实际情况获得额外加分或扣分。
 
 ## 联系方式
 如有任何问题或疑虑，请联系：
